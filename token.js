@@ -2,7 +2,7 @@
 * @Author: shikar
 * @Date:   2017-02-05 13:50:16
 * @Last Modified by:   shikar
-* @Last Modified time: 2017-05-01 03:01:12
+* @Last Modified time: 2017-05-01 03:10:50
 */
 'use strict'
 const got = require('got')
@@ -74,7 +74,7 @@ function updateTKK(domain) {
     if (Number(window.TKK.split('.')[0]) === now) {
       resolve()
     } else {
-      got('https://${domain}').then( res => {
+      got(`https://${domain}`).then( res => {
         let code = res.body.match(/TKK=(.*?)\(\)\)'\);/g)
         let TKK = 0
 
