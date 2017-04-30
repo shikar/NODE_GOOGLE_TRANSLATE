@@ -2,7 +2,7 @@
 * @Author: shikar
 * @Date:   2017-02-05 13:50:16
 * @Last Modified by:   shikar
-* @Last Modified time: 2017-02-06 14:31:29
+* @Last Modified time: 2017-05-01 03:01:12
 */
 'use strict'
 const got = require('got')
@@ -67,14 +67,14 @@ var wr = function(a) {
 }
 
 
-function updateTKK() {
+function updateTKK(domain) {
   return new Promise( (resolve, reject) => {
     let now = Math.floor(Date.now() / 3600000)
 
     if (Number(window.TKK.split('.')[0]) === now) {
       resolve()
     } else {
-      got('https://translate.google.com').then( res => {
+      got('https://${domain}').then( res => {
         let code = res.body.match(/TKK=(.*?)\(\)\)'\);/g)
         let TKK = 0
 
@@ -97,8 +97,8 @@ function updateTKK() {
   })
 }
 
-function get(text) {
-  return updateTKK().then(() => {
+function get(text, domain = 'translate.google.com') {
+  return updateTKK(domain).then(() => {
     let tk = sM(text)
     tk = tk.replace('&tk=', '')
     return {name: 'tk', value: tk}

@@ -2,7 +2,7 @@
 * @Author: shikar
 * @Date:   2017-02-05 15:28:31
 * @Last Modified by:   shikar
-* @Last Modified time: 2017-02-06 14:31:22
+* @Last Modified time: 2017-05-01 03:00:38
 */
 'use strict'
 const querystring = require('querystring')
@@ -37,7 +37,7 @@ function recoverObject(obj, arr) {
   }
 }
 
-function translate(input, opts = {}) {
+function translate(input, opts = {}, domain='translate.google.com') {
   let e
   [opts.from, opts.to].forEach(lang => {
     if (lang && !languages.isSupported(lang)) {
@@ -59,8 +59,8 @@ function translate(input, opts = {}) {
   let text = analysisObject(input)
   text = text.join('\n')
 
-  return token.get(text).then(token => {
-    let url = 'https://translate.google.com/translate_a/single'
+  return token.get(text, domain).then(token => {
+    let url = `https://${domain}/translate_a/single`
     let data = {
       client: 't',
       sl: opts.from,
@@ -92,7 +92,7 @@ function translate(input, opts = {}) {
       let body = safeEval(res.body)
       let result = []
       body[0].forEach(obj => {
-        if (obj[0] !== undefined) {
+        if (obj[0]) {
           result.push(obj[0].replace(/\n/gm, ''))
         }
       })
