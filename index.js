@@ -37,7 +37,7 @@ function recoverObject(obj, arr) {
   }
 }
 
-function translate(input, opts = {}, domain='translate.google.com') {
+function translate(input, opts = {}, domain='translate.google.cn') {
   let e
   [opts.from, opts.to].forEach(lang => {
     if (lang && !languages.isSupported(lang)) {
@@ -84,7 +84,7 @@ function translate(input, opts = {}, domain='translate.google.com') {
       return [url + '?' + querystring.stringify(data), {q: text}]
     }
   }).then(([url, post]) => {
-    let opt = null
+    let opt = {}
     if (post) {
       opt = {body: post}
     }

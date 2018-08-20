@@ -97,7 +97,7 @@ function updateTKK(domain) {
   })
 }
 
-function get(text, domain = 'translate.google.com') {
+function get(text, domain = 'translate.google.cn') {
   return updateTKK(domain).then(() => {
     let tk = sM(text)
     tk = tk.replace('&tk=', '')
