@@ -21,7 +21,7 @@ From automatic language detection to English:
 ``` js
 const translate = require('translate-google')
 
-translate('Ik spreek Engels', {to: 'en'}).then(res => {
+translate('I speak Chinese', {to: 'zh-cn'}).then(res => {
     console.log(res)
 }).catch(err => {
     console.error(err)
@@ -31,7 +31,7 @@ translate('Ik spreek Engels', {to: 'en'}).then(res => {
 From English to Dutch with a typo:
 
 ``` js
-translate('I spea Dutch!', {from: 'en', to: 'nl'}).then(res => {
+translate('I speak Chinese!', {from: 'en', to: 'zh-cn'}).then(res => {
     console.log(res)
 }).catch(err => {
     console.error(err)
@@ -41,7 +41,7 @@ translate('I spea Dutch!', {from: 'en', to: 'nl'}).then(res => {
 
 translate for array or object:
 ``` js
-translate({a: 'I spea Dutch!', b: ['hello', 'world']}, {from: 'en', to: 'nl'}).then(res => {
+translate({a: 'I speak Chinese!', b: ['hello', 'world']}, {from: 'en', to: 'zh-cn'}).then(res => {
     console.log(res)
 }).catch(err => {
     console.error(err)
@@ -79,9 +79,9 @@ The language in which the text should be translated. Must be one of the codes/na
 - `text` *(string, object, array)* – The translated text.
 
 ``` js
-translate(['I spea Dutch', 'I spea Dutch']).then(res => {
+translate(['I speak Chinese\nHello world', 'hello'], {from: 'en', to: 'nl'}).then(res => {
     console.log(res);
-    //=> ["I [speak] Dutch", "I [speak] Dutch"]
+    //=> ["我说中文\ n你好世界","你好"]
 }).catch(err => {
     console.error(err);
 });

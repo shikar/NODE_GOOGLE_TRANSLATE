@@ -1,7 +1,7 @@
 {
   "name": "translate-google",
-  "version": "1.0.3",
-  "description": "A free and unlimited for Google Translate",
+  "version": "1.1.0",
+  "description": "A free and unlimited for Google Translate, Multi-translation support object input",
   "main": "index.js",
   "scripts": {
     "test": "nyc ava"
@@ -14,7 +14,8 @@
     "unlimited",
     "language",
     "batch",
-    "multi"
+    "multi",
+    "object"
   ],
   "author": {
     "name": "shikar",

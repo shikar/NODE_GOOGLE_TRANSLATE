@@ -43,6 +43,17 @@ test('translate with array and object', async t => {
   }
 })
 
+test('translate with \\n', async t => {
+  try {
+    const res = await translate({a: '你\n好', b: ['你\n好', '你好']})
+    t.is(res.a, 'you\nit is good')
+    t.is(res.b[0], 'you\nit is good')
+    t.is(res.b[1], 'Hello there')
+  } catch (err) {
+    t.fail(err.code)
+  }
+})
+
 test('translate with option', async t => {
   try {
     const res = await translate('Hello', {from: 'en', to: 'zh-cn'})

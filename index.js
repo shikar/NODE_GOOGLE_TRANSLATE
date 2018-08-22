@@ -12,12 +12,18 @@ const token = require('./token')
 const languages = require('./languages')
 
 function analysisObject(obj, ret = [], idx = 0) {
+  let brCount = 0
   if (typeof obj === 'object') {
     for (let i in obj) {
       if (typeof obj[i] !== 'object') {
-        idx++
         ret.push(obj[i])
-        obj[i] = idx - 1
+        brCount = (obj[i].split('\n')).length
+        obj[i] = idx
+        if (brCount > 1) {
+          obj[i] = idx + '-' + ( idx + brCount )
+          idx += brCount - 1
+        }
+        idx++
       } else {
         analysisObject(obj[i], ret, idx)
       }
@@ -31,7 +37,13 @@ function recoverObject(obj, arr) {
     for (let i in obj) {
       recoverObject(obj[i], arr)
       if (typeof obj[i] !== 'object') {
-        obj[i] = arr[obj[i]]
+        if (obj[i].toString().indexOf('-') > -1) {
+          let dis = obj[i].toString().split('-')
+          obj[i] = arr.slice(dis[0], dis[1]).join('\n')
+        } else {
+          obj[i] = arr[obj[i]].replace(/^\s+|\s+$/gm,'')
+        }
+        
       }
     }
   }
@@ -90,12 +102,15 @@ function translate(input, opts = {}, domain='translate.google.cn') {
     }
     return got(url, opt).then(res => {
       let body = safeEval(res.body)
-      let result = []
+      let retString = ''
+      
       body[0].forEach(obj => {
         if (obj[0]) {
-          result.push(obj[0].replace(/\n/gm, ''))
+          retString += obj[0]
         }
       })
+      let result = retString.split('\n')
+
       recoverObject(input, result)
       return input[0]
     }).catch(err => {
