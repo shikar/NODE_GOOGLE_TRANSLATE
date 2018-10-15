@@ -75,7 +75,7 @@ function updateTKK(domain) {
       resolve()
     } else {
       got(`https://${domain}`).then( res => {
-        let code = res.body.match(/TKK=(.*?)\(\)\)'\);/g)
+        let code = res.body.match(/TKK=(.*?);/g)
         let TKK = 0
 
         if (code) {
@@ -102,7 +102,7 @@ function get(text, domain = 'translate.google.cn') {
     let tk = sM(text)
     tk = tk.replace('&tk=', '')
     return {name: 'tk', value: tk}
-  }).catch(function (err) {
+  }).catch( err => {
     throw err
   })
 }

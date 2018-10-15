@@ -120,7 +120,8 @@ function translate(input, opts = {}, domain='translate.google.cn') {
       } else {
         e.code = 'BAD_NETWORK'
       }
-      throw e
+      e.message = err.message
+      return e
     })
   })
 }
