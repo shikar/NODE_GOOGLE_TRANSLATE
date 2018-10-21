@@ -1,6 +1,6 @@
 {
   "name": "translate-google",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "A free and unlimited for Google Translate, Multi-translation support object input",
   "main": "index.js",
   "scripts": {
@@ -15,7 +15,8 @@
     "language",
     "batch",
     "multi",
-    "object"
+    "object",
+    "token"
   ],
   "author": {
     "name": "shikar",
@@ -33,11 +34,12 @@
   "dependencies": {
     "configstore": "^4.0.0",
     "got": "^9.2.2",
-    "safe-eval": "^0.4.1"
+    "safe-eval": "^0.4.1",
+    "user-agents": "^1.0.52"
   },
   "devDependencies": {
     "ava": "^0.25.0",
-    "nyc": "^13.0.1"
+    "nyc": "^13.1.0"
   },
   "xo": {
     "space": 2,

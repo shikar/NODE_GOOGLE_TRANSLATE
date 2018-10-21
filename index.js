@@ -8,6 +8,7 @@
 const querystring = require('querystring')
 const got = require('got')
 const safeEval = require('safe-eval')
+const userAgents = require("user-agents")
 const token = require('./token')
 const languages = require('./languages')
 
@@ -100,6 +101,8 @@ function translate(input, opts = {}, domain='translate.google.cn') {
     if (post) {
       opt = {body: post}
     }
+    const userAgent = new userAgents({ deviceCategory: 'desktop' })
+    opt.headers = {'User-Agent': userAgent.toString()}
     return got(url, opt).then(res => {
       let body = safeEval(res.body)
       let retString = ''
