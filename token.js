@@ -70,16 +70,14 @@ var wr = function(a) {
 function updateTKK(domain) {
   return new Promise( (resolve, reject) => {
     let now = Math.floor(Date.now() / 3600000)
-
     if (Number(window.TKK.split('.')[0]) === now) {
       resolve()
     } else {
       got(`https://${domain}`).then( res => {
-        let code = res.body.match(/TKK=(.*?);/g)
+        let code = res.body.match(/tkk:\'(.*?)\'/ig)
         let TKK = 0
-
         if (code) {
-          eval(code[0])
+          TKK = code[0].match(/\d+\.\d+/)[0]
           if (typeof TKK !== 'undefined') {
             window.TKK = TKK
             config.set('TKK', TKK)
