@@ -16,6 +16,27 @@ npm install --save translate-google
 
 ## Usage
 
+Perfect support object:
+
+``` js
+const translate = require('translate-google')
+const tranObj = {
+  a: 1,
+  b: '1',
+  c: "How are you?\nI'm nice.",
+  d: [true, 'true', 'hi', { a: 'hello', b: ['world']}],
+}
+
+translate(tranObj, {to: 'zh-cn'}).then(res => {
+    console.log(res)
+}).catch(err => {
+    console.error(err)
+})
+
+// => { a: 1, b: '1', c: "你好吗？\n我很好。", d: [true, 'true', '嗨', { a: '你好', b: ['世界']}],
+}
+```
+
 From automatic language detection to English:
 
 ``` js

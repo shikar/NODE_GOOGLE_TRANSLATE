@@ -2,9 +2,10 @@
 * @Author: shikar
 * @Date:   2017-02-05 15:28:31
 * @Last Modified by:   shikar
-* @Last Modified time: 2017-05-01 03:00:38
+* @Last Modified time: 2019-01-09 16:18:38
 */
 'use strict'
+const _ = require("lodash")
 const querystring = require('querystring')
 const got = require('got')
 const safeEval = require('safe-eval')
@@ -12,121 +13,108 @@ const userAgents = require("user-agents")
 const token = require('./token')
 const languages = require('./languages')
 
-function analysisObject(obj, ret = [], idx = 0) {
-  let brCount = 0
-  if (typeof obj === 'object') {
-    for (let i in obj) {
-      if (typeof obj[i] !== 'object') {
-        ret.push(obj[i])
-        brCount = (obj[i].split('\n')).length
-        obj[i] = idx
-        if (brCount > 1) {
-          obj[i] = idx + '-' + ( idx + brCount )
-          idx += brCount - 1
-        }
-        idx++
+function enMap(obj, path='', map=[]) {
+  if (_.isObject(obj) == true) {
+    _.forEach(obj, (v, k) => {
+      const furKeyStr = _.isNumber(k) ? `[${k}]` : k
+      const curPath = path + furKeyStr
+      if (_.isObject(v) == true) {
+        enMap(v, curPath, map)
       } else {
-        analysisObject(obj[i], ret, idx)
-      }
-    }
-  }
-  return ret
-}
-
-function recoverObject(obj, arr) {
-  if (typeof obj === 'object') {
-    for (let i in obj) {
-      recoverObject(obj[i], arr)
-      if (typeof obj[i] !== 'object') {
-        if (obj[i].toString().indexOf('-') > -1) {
-          let dis = obj[i].toString().split('-')
-          obj[i] = arr.slice(dis[0], dis[1]).join('\n')
-        } else {
-          obj[i] = arr[obj[i]].replace(/^\s+|\s+$/gm,'')
+        if (_.isNaN(_.toNumber(v)) && ['true', 'false', 'null'].indexOf(v) == -1) {
+          const lastMap = _.last(map)
+          map.push({
+            p: curPath,
+            v: v,
+            i: lastMap ? lastMap.i + lastMap.l : 0,
+            l: v.split("\n").length
+          })
         }
-        
       }
-    }
+    })
+  } else {
+    map.push({
+      p: '',
+      v: obj,
+      i: 0,
+      l: obj.split("\n").length
+    })
   }
+  return map
 }
 
-function translate(input, opts = {}, domain='translate.google.cn') {
-  let e
-  [opts.from, opts.to].forEach(lang => {
-    if (lang && !languages.isSupported(lang)) {
-      e = new Error()
-      e.code = 400
-      e.message = 'The language \'' + lang + '\' is not supported'
+function deMap(src, maps, dest) {
+  if (_.isObject(src) == true) {
+    src = _.clone(src)
+    dest = dest.split("\n")
+    for (const map of maps) {
+      _.set(src, map.p, _.slice(dest, map.i, map.i+map.l).join("\n"))
     }
-  })
-  if (e) {
-    return new Promise((resolve, reject) => {
-      reject(e)
-    })
+  } else {
+    src = dest
+  }
+  return src
+}
+
+async function translate(input, opts = {}, domain='translate.google.cn') {
+  const langs = [opts.from, opts.to]
+  for (const lang of langs) {
+    if (lang && !languages.isSupported(lang)) {
+      const e = new Error('The language \'' + lang + '\' is not supported')
+      e.code = 400
+      throw e
+    }
   }
 
   opts.from = languages.getCode(opts.from || 'auto')
   opts.to = languages.getCode(opts.to || 'en')
 
-  input = JSON.parse(JSON.stringify([input]))
-  let text = analysisObject(input)
-  text = text.join('\n')
+  const strMap = enMap(input)
+  const text = _.map(strMap, 'v').join("\n")
+  const tokenRet = await token.get(text, domain)
+  let url = `https://${domain}/translate_a/single`
+  const params = {
+    client: 't',
+    sl: opts.from,
+    tl: opts.to,
+    hl: opts.to,
+    dt: ['at', 'bd', 'ex', 'ld', 'md', 'qca', 'rw', 'rm', 'ss', 't'],
+    ie: 'UTF-8',
+    oe: 'UTF-8',
+    otf: 1,
+    ssel: 0,
+    tsel: 0,
+    kc: 7,
+    q: text
+  }
+  params[tokenRet.name] = tokenRet.value
+  const query = querystring.stringify(params)
+  const opt = {headers: {'User-Agent': new userAgents({ deviceCategory: 'desktop' }).toString()}}
+  
+  if (query.length <= 1980) {
+    url = url + '?' + query
+  } else {
+    delete params.q
+    opt.body = {q: text}
+    url = url + '?' + querystring.stringify(params)
+  }
 
-  return token.get(text, domain).then(token => {
-    let url = `https://${domain}/translate_a/single`
-    let data = {
-      client: 't',
-      sl: opts.from,
-      tl: opts.to,
-      hl: opts.to,
-      dt: ['at', 'bd', 'ex', 'ld', 'md', 'qca', 'rw', 'rm', 'ss', 't'],
-      ie: 'UTF-8',
-      oe: 'UTF-8',
-      otf: 1,
-      ssel: 0,
-      tsel: 0,
-      kc: 7,
-      q: text
-    }
-    data[token.name] = token.value
-    let query = querystring.stringify(data)
-    if (query.length <= 1980) {
-      return [url + '?' + query, null]
+  try {
+    const res = await got(url, opt)
+    const body = safeEval(res.body)
+    const retString = _.map(body[0], 0).join('')
+    return deMap(input, strMap, retString)
+
+  } catch (error) {
+
+    let e = new Error(error.message)
+    if (error.statusCode !== undefined && error.statusCode !== 200) {
+      e.code = 'BAD_REQUEST'
     } else {
-      delete data.q
-      return [url + '?' + querystring.stringify(data), {q: text}]
+      e.code = 'BAD_NETWORK'
     }
-  }).then(([url, post]) => {
-    let opt = {}
-    if (post) {
-      opt = {body: post}
-    }
-    const userAgent = new userAgents({ deviceCategory: 'desktop' })
-    opt.headers = {'User-Agent': userAgent.toString()}
-    return got(url, opt).then(res => {
-      let body = safeEval(res.body)
-      let retString = ''
-      
-      body[0].forEach(obj => {
-        if (obj[0]) {
-          retString += obj[0]
-        }
-      })
-      let result = retString.split('\n')
-
-      recoverObject(input, result)
-      return input[0]
-    }).catch(err => {
-      let e = new Error()
-      if (err.statusCode !== undefined && err.statusCode !== 200) {
-        e.code = 'BAD_REQUEST'
-      } else {
-        e.code = 'BAD_NETWORK'
-      }
-      e.message = err.message
-      return e
-    })
-  })
+    throw e
+  }
 }
 
 module.exports = translate
