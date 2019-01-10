@@ -33,8 +33,7 @@ translate(tranObj, {to: 'zh-cn'}).then(res => {
     console.error(err)
 })
 
-// => { a: 1, b: '1', c: "你好吗？\n我很好。", d: [true, 'true', '嗨', { a: '你好', b: ['世界']}],
-}
+// => { a: 1, b: '1', c: "你好吗？\n我很好。", d: [true, 'true', '嗨', { a: '你好', b: ['世界']}] }
 ```
 
 From automatic language detection to English:

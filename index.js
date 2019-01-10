@@ -6,6 +6,9 @@
 */
 'use strict'
 const _ = require("lodash")
+const isUrl = require("is-url")
+const isNumber = require("num-or-not")
+const isKeyword = require('is-keyword-js')
 const querystring = require('querystring')
 const got = require('got')
 const safeEval = require('safe-eval')
@@ -21,7 +24,7 @@ function enMap(obj, path='', map=[]) {
       if (_.isObject(v) == true) {
         enMap(v, curPath, map)
       } else {
-        if (_.isNaN(_.toNumber(v)) && ['true', 'false', 'null'].indexOf(v) == -1) {
+        if (_.isString(v) && !isNumber(v) && !isUrl(v) && !isKeyword(v) && !v.test(/^(?!([a-z]+|\d+|[\?=\.\*\[\]~!@#\$%\^&\(\)_+`\/\-={}:";'<>,]+)$)[a-z\d\?=\.\*\[\]~!@#\$%\^&\(\)_+`\/\-={}:";'<>,]+$/i)) {
           const lastMap = _.last(map)
           map.push({
             p: curPath,
