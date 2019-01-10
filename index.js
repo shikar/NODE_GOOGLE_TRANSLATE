@@ -24,7 +24,7 @@ function enMap(obj, path='', map=[]) {
       if (_.isObject(v) == true) {
         enMap(v, curPath, map)
       } else {
-        if (_.isString(v) && !isNumber(v) && !isUrl(v) && !isKeyword(v) && !v.test(/^(?!([a-z]+|\d+|[\?=\.\*\[\]~!@#\$%\^&\(\)_+`\/\-={}:";'<>,]+)$)[a-z\d\?=\.\*\[\]~!@#\$%\^&\(\)_+`\/\-={}:";'<>,]+$/i)) {
+        if (_.isString(v) && !isNumber(v) && !isUrl(v) && !isKeyword(v) && !/^(?!([a-z]+|\d+|[\?=\.\*\[\]~!@#\$%\^&\(\)_+`\/\-={}:";'<>,]+)$)[a-z\d\?=\.\*\[\]~!@#\$%\^&\(\)_+`\/\-={}:";'<>,]+$/i.test(v)) {
           const lastMap = _.last(map)
           map.push({
             p: curPath,
