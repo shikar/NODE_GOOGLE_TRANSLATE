@@ -98,7 +98,8 @@ async function translate(input, opts = {}, domain='translate.google.cn') {
     url = url + '?' + query
   } else {
     delete params.q
-    opt.body = {q: text}
+    opt.method = 'POST'
+    opt.body = `q=${text}`
     url = url + '?' + querystring.stringify(params)
   }
 

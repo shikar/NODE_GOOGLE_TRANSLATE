@@ -8,7 +8,8 @@ test('translate with string', async t => {
     const res = await translate('你好')
     t.is(res, 'Hello there')
   } catch (err) {
-    t.fail(err.code)
+    t.log(err)
+    t.fail()
   }
 })
 
@@ -18,7 +19,8 @@ test('translate with array', async t => {
     t.is(res[0], 'Hello there')
     t.is(res[1], 'Hello there')
   } catch (err) {
-    t.fail(err.code)
+    t.log(err)
+    t.fail()
   }
 })
 
@@ -28,14 +30,15 @@ test('translate with object', async t => {
     t.is(res.a, 'Hello there')
     t.is(res.b, 'Hello there')
   } catch (err) {
-    t.fail(err.code)
+    t.log(err)
+    t.fail()
   }
 })
 
 test('translate with object', async t => {
   try {
     const obj = { a: 1, b: '1', c: "How are you?\nI'm nice.", d: [true, 'true', 'hi', { a: 'hello', b: ['world']}] }
-    const res = await translate(obj, {to: 'zh-cn'})
+    const res = await translate(obj, {from: 'en', to: 'zh-cn'})
     t.is(res.a, 1)
     t.is(res.b, '1')
     t.is(res.c, '你好吗？\n我很好。')
@@ -45,7 +48,8 @@ test('translate with object', async t => {
     t.is(res.d[3].a, '你好')
     t.is(res.d[3].b[0], '世界')
   } catch (err) {
-    t.fail(err.code)
+    t.log(err)
+    t.fail()
   }
 })
 
@@ -56,7 +60,8 @@ test('translate with array and object', async t => {
     t.is(res.b[0], 'Hello there')
     t.is(res.b[1], 'Hello there')
   } catch (err) {
-    t.fail(err.code)
+    t.log(err)
+    t.fail()
   }
 })
 
@@ -67,7 +72,8 @@ test('translate with \\n', async t => {
     t.is(res.b[0], 'you\nit is good')
     t.is(res.b[1], 'Hello there')
   } catch (err) {
-    t.fail(err.code)
+    t.log(err)
+    t.fail()
   }
 })
 
@@ -76,7 +82,8 @@ test('translate with option', async t => {
     const res = await translate('Hello', {from: 'en', to: 'zh-cn'})
     t.is(res, '你好')
   } catch (err) {
-    t.fail(err.code)
+    t.log(err)
+    t.fail()
   }
 })
 
