@@ -2,7 +2,7 @@
 free google translate
 
 ## Change Log
-- [changelog.md](https://github.com/shikar/M_NMP_GOOGLE_TRANSLATE/blob/master/changelog.md)
+- [changelog.md](https://github.com/shikar/M_NMP_GOOGLE_TRANSLATE/blob/master/CHANGELOG.md)
 
 
 ## Features
