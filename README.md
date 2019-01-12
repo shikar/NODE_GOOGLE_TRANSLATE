@@ -1,6 +1,9 @@
 # Translate Google
 free google translate
 
+## Change Log
+- [changelog.md](https://github.com/shikar/M_NMP_GOOGLE_TRANSLATE/blob/master/changelog.md)
+
 
 ## Features
 
@@ -101,7 +104,7 @@ The language in which the text should be translated. Must be one of the codes/na
 ``` js
 translate(['I speak Chinese\nHello world', 'hello'], {from: 'en', to: 'nl'}).then(res => {
     console.log(res);
-    //=> ["我说中文\ n你好世界","你好"]
+    //=> ["我说中文\n你好世界","你好"]
 }).catch(err => {
     console.error(err);
 });
