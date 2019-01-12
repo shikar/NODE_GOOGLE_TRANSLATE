@@ -34,7 +34,7 @@
   "dependencies": {
     "configstore": "^4.0.0",
     "form-data": "^2.3.3",
-    "got": "^9.2.2",
+    "got": "^9.5.0",
     "is-keyword-js": "^1.0.3",
     "is-url": "^1.2.4",
     "lodash": "^4.17.11",
@@ -42,7 +42,7 @@
     "request": "^2.88.0",
     "request-promise": "^4.2.2",
     "safe-eval": "^0.4.1",
-    "user-agents": "^1.0.52"
+    "user-agents": "^1.0.133"
   },
   "devDependencies": {
     "ava": "^0.25.0",
