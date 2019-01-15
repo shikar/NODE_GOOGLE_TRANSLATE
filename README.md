@@ -30,13 +30,13 @@ const tranObj = {
   d: [true, 'true', 'hi', { a: 'hello', b: ['world']}],
 }
 
-translate(tranObj, {to: 'zh-cn'}).then(res => {
+translate(tranObj, {to: 'zh-cn', except:['a']}).then(res => {
     console.log(res)
 }).catch(err => {
     console.error(err)
 })
 
-// => { a: 1, b: '1', c: "你好吗？\n我很好。", d: [true, 'true', '嗨', { a: '你好', b: ['世界']}] }
+// => { a: 1, b: '1', c: "你好吗？\n我很好。", d: [true, 'true', '嗨', { a: 'hello', b: ['世界']}] }
 ```
 
 From automatic language detection to English:
@@ -76,26 +76,23 @@ translate({a: 'I speak Chinese!', b: ['hello', 'world']}, {from: 'en', to: 'zh-c
 ### translate(text, options)
 
 #### text
-
 Type: `string`, `object`, `array`
-
 The text to be translated
 
 #### options
-
 Type: `object`
 
 ##### from
-
 Type: `string` Default: `auto`
-
 The `text` language. Must be `auto` or one of the codes/names (not case sensitive) contained in [languages.js](https://github.com/shikar/NODE_GOOGLE_TRANSLATE/blob/master/languages.js)
 
 ##### to
-
 Type: `string` Default: `en`
-
 The language in which the text should be translated. Must be one of the codes/names (not case sensitive) contained in [languages.js](https://github.com/shikar/NODE_GOOGLE_TRANSLATE/blob/master/languages.js).
+
+##### except
+Type: `array` Default:`[]`
+Attributes in excluded objects do not participate in translation
 
 ### Returns an `object`:
 

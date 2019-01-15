@@ -16,22 +16,51 @@ const userAgents = require("user-agents")
 const token = require('./token')
 const languages = require('./languages')
 
-function enMap(obj, path='', map=[]) {
+function checkSame(v, maps) {
+  for (const idx in maps) {
+    if (maps[idx].v === v) {
+      return idx
+    }
+  }
+  return -1
+}
+
+function enMap(obj, except=[], path='', map=[]) {
   if (_.isObject(obj) == true) {
     _.forEach(obj, (v, k) => {
-      const furKeyStr = _.isNumber(k) ? `[${k}]` : k
+      const furKeyStr = _.isNumber(k) ? `[${k}]` : ( path && '.' ) + k
       const curPath = path + furKeyStr
       if (_.isObject(v) == true) {
-        enMap(v, curPath, map)
+        enMap(v, except, curPath, map)
       } else {
-        if (_.isString(v) && !isNumber(v) && !isUrl(v) && !isKeyword(v) && !/^(?!([a-z]+|\d+|[\?=\.\*\[\]~!@#\$%\^&\(\)_+`\/\-={}:";'<>,]+)$)[a-z\d\?=\.\*\[\]~!@#\$%\^&\(\)_+`\/\-={}:";'<>,]+$/i.test(v)) {
-          const lastMap = _.last(map)
-          map.push({
-            p: curPath,
-            v: v,
-            i: lastMap ? lastMap.i + lastMap.l : 0,
-            l: v.split("\n").length
-          })
+        const exceptReg = except.length > 0 ? new RegExp(`(^|\\.)(${_.map(except, _.escapeRegExp).join('|')})(\\.|\\[|$)`, 'i') : false
+        if (
+          _.isString(v) &&
+          !isNumber(v) &&
+          !isUrl(v) &&
+          !isKeyword(v) &&
+          !/^(?!([a-z]+|\d+|[\?=\.\*\[\]~!@#\$%\^&\(\)_+`\/\-={}:";'<>,]+)$)[a-z\d\?=\.\*\[\]~!@#\$%\^&\(\)_+`\/\-={}:";'<>,]+$/i.test(v) &&
+          (!exceptReg || !exceptReg.test(curPath))
+        ) {
+          const idx = checkSame(v, map)
+          if (idx > -1) {
+            map.splice(idx+1, 0, {
+              p: curPath,
+              v: v,
+              i: map[idx].i,
+              l: map[idx].l,
+              s: true
+            })
+          } else {
+            const lastMap = _.last(map)
+            map.push({
+              p: curPath,
+              v: v,
+              i: lastMap ? lastMap.i + lastMap.l : 0,
+              l: v.split("\n").length,
+              s: false
+            })
+          }
         }
       }
     })
@@ -61,6 +90,7 @@ function deMap(src, maps, dest) {
 
 async function translate(input, opts = {}, domain='translate.google.cn') {
   const langs = [opts.from, opts.to]
+  const except = opts.except || []
   for (const lang of langs) {
     if (lang && !languages.isSupported(lang)) {
       const e = new Error('The language \'' + lang + '\' is not supported')
@@ -72,8 +102,8 @@ async function translate(input, opts = {}, domain='translate.google.cn') {
   opts.from = languages.getCode(opts.from || 'auto')
   opts.to = languages.getCode(opts.to || 'en')
 
-  const strMap = enMap(input)
-  const text = _.map(strMap, 'v').join("\n")
+  const strMap = enMap(input, except)
+  const text = _.map(_.differenceBy(strMap, [{ s: true }], 's'), 'v').join("\n")
   const tokenRet = await token.get(text, domain)
   let url = `https://${domain}/translate_a/single`
   const params = {

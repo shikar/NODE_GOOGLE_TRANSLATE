@@ -77,6 +77,18 @@ test('translate with \\n', async t => {
   }
 })
 
+test('translate with except', async t => {
+  try {
+    const res = await translate({a: '你\n好', b: ['你\n好', '你好']}, {except:['a']})
+    t.is(res.a, '你\n好')
+    t.is(res.b[0], 'you\nit is good')
+    t.is(res.b[1], 'Hello there')
+  } catch (err) {
+    t.log(err)
+    t.fail()
+  }
+})
+
 test('translate with option', async t => {
   try {
     const res = await translate('Hello', {from: 'en', to: 'zh-cn'})
