@@ -10,11 +10,10 @@ const isUrl = require("is-url")
 const isNumber = require("num-or-not")
 const isKeyword = require('is-keyword-js')
 const querystring = require('querystring')
-const got = require('got')
-const safeEval = require('safe-eval')
 const userAgents = require("user-agents")
 const token = require('./token')
 const languages = require('./languages')
+const rq = require('request-promise')
 
 function checkSame(v, maps) {
   for (const idx in maps) {
@@ -122,25 +121,23 @@ async function translate(input, opts = {}, domain='translate.google.cn') {
   }
   params[tokenRet.name] = tokenRet.value
   const query = querystring.stringify(params)
-  const opt = {headers: {'User-Agent': new userAgents({ deviceCategory: 'desktop' }).toString()}}
-  
+  const opt = { json:true, headers: {'User-Agent': new userAgents({ deviceCategory: 'desktop' }).toString()} }
   if (query.length <= 1980) {
-    url = url + '?' + query
+    opt.method = 'GET'
+    opt.uri = url + '?' + query
   } else {
     delete params.q
     opt.method = 'POST'
-    opt.body = `q=${text}`
-    url = url + '?' + querystring.stringify(params)
+    opt.form = {q: text}
+    opt.uri = url + '?' + querystring.stringify(params)
   }
-
   try {
-    const res = await got(url, opt)
-    const body = safeEval(res.body)
+    const res = await rq(opt)
+    const body = res
     const retString = _.map(body[0], 0).join('')
     return deMap(input, strMap, retString)
 
   } catch (error) {
-
     let e = new Error(error.message)
     if (error.statusCode !== undefined && error.statusCode !== 200) {
       e.code = 'BAD_REQUEST'

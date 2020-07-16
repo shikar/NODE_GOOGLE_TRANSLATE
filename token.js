@@ -2,7 +2,7 @@
 * @Author: shikar
 * @Date:   2017-02-05 13:50:16
 * @Last Modified by:   shikar
-* @Last Modified time: 2017-05-01 03:10:50
+* @Last Modified time: 2019-01-16 17:30:16
 */
 'use strict'
 const got = require('got')
@@ -67,42 +67,36 @@ var wr = function(a) {
 }
 
 
-function updateTKK(domain) {
-  return new Promise( (resolve, reject) => {
-    let now = Math.floor(Date.now() / 3600000)
-    if (Number(window.TKK.split('.')[0]) === now) {
-      resolve()
-    } else {
-      got(`https://${domain}`).then( res => {
-        let code = res.body.match(/tkk:\'(.*?)\'/ig)
-        let TKK = 0
-        if (code) {
-          TKK = code[0].match(/\d+\.\d+/)[0]
-          if (typeof TKK !== 'undefined') {
-            window.TKK = TKK
-            config.set('TKK', TKK)
-          }
+async function updateTKK(domain) {
+  const now = Math.floor(Date.now() / 3600000)
+  if (Number(window.TKK.split('.')[0]) === now) {
+    return
+  } else {
+    try {
+      const res = await got(`https://${domain}`)
+      const code = res.body.match(/tkk:\'(.*?)\'/ig)
+      if (code) {
+        const TKK = code[0].match(/\d+\.\d+/)[0]
+        if (typeof TKK !== 'undefined') {
+          config.set('TKK', TKK)
         }
-
-        resolve()
-      }).catch( err => {
-        let e = new Error()
-        e.code = 'BAD_NETWORK'
-        e.message = err.message
-        reject(e)
-      })
+      }
+      return
+    } catch (error) {
+      error.code = 'BAD_NETWORK'
+      throw error
     }
-  })
+  }
 }
 
-function get(text, domain = 'translate.google.cn') {
-  return updateTKK(domain).then(() => {
-    let tk = sM(text)
-    tk = tk.replace('&tk=', '')
+async function get(text, domain = 'translate.google.cn') {
+  try {
+    await updateTKK(domain)
+    const tk = sM(text).replace('&tk=', '')
     return {name: 'tk', value: tk}
-  }).catch( err => {
-    throw err
-  })
+  } catch (error) {
+    throw error
+  }
 }
 
-module.exports.get = get;
+module.exports.get = get
