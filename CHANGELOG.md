@@ -1,5 +1,9 @@
 # Change Log
 
+## 1.4.0 [2020-07-16]
+### Added
+- Fixed Lots of translations bug
+
 ## 1.3.4 [2019-01-15]
 ### Added
 - Added object translation exclusions
