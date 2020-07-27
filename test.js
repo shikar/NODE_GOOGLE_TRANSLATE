@@ -1,7 +1,6 @@
-import test from 'ava'
-
-import languages from './languages'
-import translate from './index'
+const test = require('ava')
+const languages = require('./languages')
+const translate = require('./index')
 
 test('translate with string', async t => {
   try {
@@ -35,7 +34,7 @@ test('translate with object', async t => {
   }
 })
 
-test('translate with object', async t => {
+test('translate with full object', async t => {
   try {
     const obj = { a: 1, b: '1', c: "How are you?\nI'm nice.", d: [true, 'true', 'hi', { a: 'hello', b: ['world']}] }
     const res = await translate(obj, {from: 'en', to: 'zh-cn'})

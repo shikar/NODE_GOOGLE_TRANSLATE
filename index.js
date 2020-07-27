@@ -13,7 +13,7 @@ const querystring = require('querystring')
 const userAgents = require("user-agents")
 const token = require('./token')
 const languages = require('./languages')
-const rq = require('request-promise')
+const got = require('got')
 
 function checkSame(v, maps) {
   for (const idx in maps) {
@@ -121,22 +121,20 @@ async function translate(input, opts = {}, domain='translate.google.cn') {
   }
   params[tokenRet.name] = tokenRet.value
   const query = querystring.stringify(params)
-  const opt = { json:true, headers: {'User-Agent': new userAgents({ deviceCategory: 'desktop' }).toString()} }
+  const opt = { responseType: 'json', headers: {'User-Agent': new userAgents({ deviceCategory: 'desktop' }).toString()} }
   if (query.length <= 1980) {
     opt.method = 'GET'
-    opt.uri = url + '?' + query
+    url = url + '?' + query
   } else {
     delete params.q
     opt.method = 'POST'
     opt.form = {q: text}
-    opt.uri = url + '?' + querystring.stringify(params)
+    url = url + '?' + querystring.stringify(params)
   }
   try {
-    const res = await rq(opt)
-    const body = res
+    const { body } = await got(url, opt)
     const retString = _.map(body[0], 0).join('')
     return deMap(input, strMap, retString)
-
   } catch (error) {
     let e = new Error(error.message)
     if (error.statusCode !== undefined && error.statusCode !== 200) {

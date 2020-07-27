@@ -1,6 +1,6 @@
 {
   "name": "translate-google",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "description": "A free and unlimited for Google Translate, Multi-translation support object input",
   "main": "index.js",
   "scripts": {
@@ -32,20 +32,18 @@
   "homepage": "https://github.com/shikar/NODE_GOOGLE_TRANSLATE#readme",
   "license": "MIT",
   "dependencies": {
-    "configstore": "^4.0.0",
-    "got": "^9.6.0",
+    "configstore": "^5.0.1",
+    "got": "^11.5.1",
     "is-keyword-js": "^1.0.3",
     "is-url": "^1.2.4",
     "lodash": "^4.17.19",
     "num-or-not": "^1.0.1",
-    "request": "^2.88.2",
-    "request-promise": "^4.2.5",
     "safe-eval": "^0.4.1",
     "user-agents": "^1.0.559"
   },
   "devDependencies": {
-    "ava": "^0.25.0",
-    "nyc": "^13.3.0"
+    "ava": "^3.10.1",
+    "nyc": "^15.1.0"
   },
   "xo": {
     "space": 2,

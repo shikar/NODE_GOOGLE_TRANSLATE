@@ -1,7 +1,11 @@
 # Change Log
 
+## 1.4.1 [2020-07-27]
+### Changed
+- Change the submission module of post
+
 ## 1.4.0 [2020-07-16]
-### Added
+### Fixed
 - Fixed Lots of translations bug
 
 ## 1.3.4 [2019-01-15]
