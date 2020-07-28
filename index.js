@@ -2,18 +2,17 @@
 * @Author: shikar
 * @Date:   2017-02-05 15:28:31
 * @Last Modified by:   shikar
-* @Last Modified time: 2019-01-12 11:40:29
+* @Last Modified time: 2020-07-28 17:20:29
 */
 'use strict'
 const _ = require("lodash")
 const isUrl = require("is-url")
 const isNumber = require("num-or-not")
 const isKeyword = require('is-keyword-js')
-const querystring = require('querystring')
+const got = require('got')
 const userAgents = require("user-agents")
 const token = require('./token')
 const languages = require('./languages')
-const got = require('got')
 
 function checkSame(v, maps) {
   for (const idx in maps) {
@@ -104,33 +103,31 @@ async function translate(input, opts = {}, domain='translate.google.cn') {
   const strMap = enMap(input, except)
   const text = _.map(_.differenceBy(strMap, [{ s: true }], 's'), 'v').join("\n")
   const tokenRet = await token.get(text, domain)
-  let url = `https://${domain}/translate_a/single`
-  const params = {
-    client: 't',
-    sl: opts.from,
-    tl: opts.to,
-    hl: opts.to,
-    dt: ['at', 'bd', 'ex', 'ld', 'md', 'qca', 'rw', 'rm', 'ss', 't'],
-    ie: 'UTF-8',
-    oe: 'UTF-8',
-    otf: 1,
-    ssel: 0,
-    tsel: 0,
-    kc: 7,
-    q: text
-  }
-  params[tokenRet.name] = tokenRet.value
-  const query = querystring.stringify(params)
+  const url = `https://${domain}/translate_a/single`
+  const searchParams = new URLSearchParams([
+    ['client', 't'],
+    ['sl', opts.from],
+    ['tl', opts.to],
+    ['hl', opts.to],
+    ['dt', 'at'], ['dt', 'bd'], ['dt', 'ex'], ['dt', 'ld'], ['dt', 'md'], ['dt', 'qca'], ['dt', 'rw'], ['dt', 'rm'], ['dt', 'ss'], ['dt', 't'],
+    ['ie', 'UTF-8'],
+    ['oe', 'UTF-8'],
+    ['otf', 1],
+    ['ssel', 0],
+    ['tsel', 0],
+    ['kc', 7],
+    ['q', text],
+    [tokenRet.name, tokenRet.value]
+  ])
   const opt = { responseType: 'json', headers: {'User-Agent': new userAgents({ deviceCategory: 'desktop' }).toString()} }
-  if (query.length <= 1980) {
+  if (searchParams.toString().length <= 1980) {
     opt.method = 'GET'
-    url = url + '?' + query
   } else {
-    delete params.q
+    searchParams.delete('q')
     opt.method = 'POST'
-    opt.form = {q: text}
-    url = url + '?' + querystring.stringify(params)
+    opt.form = { q: text }
   }
+  opt.searchParams = searchParams
   try {
     const { body } = await got(url, opt)
     const retString = _.map(body[0], 0).join('')

@@ -1,5 +1,9 @@
 # Change Log
 
+## 1.4.2 [2020-07-28]
+### Changed
+- Changed url params processing method
+
 ## 1.4.1 [2020-07-27]
 ### Changed
 - Change the submission module of post
