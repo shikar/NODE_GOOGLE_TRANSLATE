@@ -89,6 +89,7 @@ function deMap(src, maps, dest) {
 async function translate(input, opts = {}, domain='translate.google.cn') {
   const langs = [opts.from, opts.to]
   const except = opts.except || []
+  input = _.cloneDeep(input)
   for (const lang of langs) {
     if (lang && !languages.isSupported(lang)) {
       const e = new Error('The language \'' + lang + '\' is not supported')

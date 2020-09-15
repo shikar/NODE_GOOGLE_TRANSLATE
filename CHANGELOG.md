@@ -1,5 +1,9 @@
 # Change Log
 
+## 1.4.3 [2020-08-10]
+### Fixed
+- Clone a new input so that it will not affect the original variable
+
 ## 1.4.2 [2020-07-28]
 ### Changed
 - Changed url params processing method
