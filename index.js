@@ -1,18 +1,46 @@
-/*
-* @Author: shikar
-* @Date:   2017-02-05 15:28:31
-* @Last Modified by:   shikar
-* @Last Modified time: 2020-07-28 17:20:29
-*/
-'use strict'
-const _ = require("lodash")
-const isUrl = require("is-url")
-const isNumber = require("num-or-not")
-const isKeyword = require('is-keyword-js')
-const got = require('got')
-const userAgents = require("user-agents")
-const token = require('./token')
-const languages = require('./languages')
+
+'use strict';
+
+const _ = require("lodash");
+const got = require('got');
+const userAgents = require("user-agents");
+const token = require('./token');
+const languages = require('./languages');
+
+function isKeyword(keyword) {
+  const reservedKeywords = ['abstract', 'await', 'boolean', 'break', 'byte', 'case', 'catch', 'char', 'class', 'const', 'continue', 'debugger', 'default', 'delete', 'do', 'double', 'else', 'enum', 'export', 'extends', 'false', 'final', 'finally', 'float', 'for', 'function', 'goto', 'if', 'implements', 'import', 'in', 'instanceof', 'int', 'interface', 'let', 'long', 'native', 'new', 'null', 'package', 'private', 'protected', 'public', 'return', 'short', 'static', 'super', 'switch', 'synchronized', 'this', 'throw', 'transient', 'true', 'try', 'typeof', 'var', 'void', 'volatile', 'while', 'with', 'yield'];
+
+  return reservedKeywords.includes(keyword);
+}
+
+function isNumber(n) {
+  var type = typeof n;
+
+  if (type !== 'string' && type !== 'number'){
+    return false;
+  }
+
+  if (type === 'string'){
+    n = n.replace(/[,|.]/g, '');
+    if (n.trim() === ''){
+      return false;
+    } else {
+      n = +n;
+    }
+  }
+
+  return typeof n === 'number' && n - n < 1;
+}
+
+function isUrl(u) {
+  try {
+    new URL(u);
+  } catch {
+    return false;
+  }
+
+  return true;
+}
 
 function checkSame(v, maps) {
   for (const idx in maps) {
