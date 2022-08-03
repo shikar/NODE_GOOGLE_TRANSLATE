@@ -114,7 +114,7 @@ function deMap(src, maps, dest) {
   return src
 }
 
-async function translate(input, opts = {}, domain='translate.google.cn') {
+async function translate(input, opts = {}, domain='translate.google.com') {
   const langs = [opts.from, opts.to]
   const except = opts.except || []
   input = _.cloneDeep(input)

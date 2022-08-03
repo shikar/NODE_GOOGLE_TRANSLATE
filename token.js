@@ -89,7 +89,7 @@ async function updateTKK(domain) {
   }
 }
 
-async function get(text, domain = 'translate.google.cn') {
+async function get(text, domain = 'translate.google.com') {
   try {
     await updateTKK(domain)
     const tk = sM(text).replace('&tk=', '')
