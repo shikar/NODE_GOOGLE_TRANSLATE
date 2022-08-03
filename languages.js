@@ -130,9 +130,9 @@ function getCode(desiredLang) {
 }
 
 function isSupported(desiredLang) {
-    return Boolean(getCode(desiredLang))
+    return Boolean(getCode(desiredLang));
 }
 
-module.exports = langs
-module.exports.isSupported = isSupported
-module.exports.getCode = getCode
+module.exports = langs;
+module.exports.isSupported = isSupported;
+module.exports.getCode = getCode;
