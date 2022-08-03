@@ -1,6 +1,6 @@
 {
   "name": "translate-google",
-  "version": "1.4.3-fork-0.0.2",
+  "version": "1.4.3-fork-0.1.0",
   "description": "A free and unlimited for Google Translate, Multi-translation support object input",
   "main": "index.js",
   "scripts": {
