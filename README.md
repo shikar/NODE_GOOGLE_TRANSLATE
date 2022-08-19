@@ -94,6 +94,10 @@ The language in which the text should be translated. Must be one of the codes/na
 Type: `array` Default:`[]`
 Attributes in excluded objects do not participate in translation
 
+#### tld
+Type: `string` Default: `com`
+Which Top-Level Domain to use, the default is translate.google.`com`
+
 ### Returns an `object`:
 
 - `text` *(string, object, array)* – The translated text.
